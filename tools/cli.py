@@ -132,7 +132,7 @@ def command(args):
         elif args.command == "check":
             report = device.run_check(settings, "check", "sdl-check.json", timeout=180)
             fields = ["tableReady", "initialized", "windowCreated", "diagnosticFrameCompleted", "eventRoundTrip", "rawFingerEventsHidden", "mouseEventsPreserved", "nativeMousePositionPreserved"]
-            groups = ["touchGamepad", "touchLayout", "displayModes", "touchMouseRouting"]
+            groups = ["touchGamepad", "touchLayout", "displayModes", "touchMouseRouting", "touchKeyboardRouting"]
             failed = [name for name in fields if not report.get(name)] + [name for name in groups if not report.get(name, {}).get("passed")]
             if failed:
                 raise UserError("Device checks failed: {}. See build/reports/sdl-check.json.".format(", ".join(failed)))

@@ -131,7 +131,7 @@ def run_check(settings, mode, filename, timeout=600):
 
 def logs(settings):
     directory = BUILD / "logs" / datetime.now().strftime("device-%Y%m%d-%H%M%S")
-    known = {"guest-console.log", "guest-load.log", "game-memory.jsonl", "sdl-check.json", "resource-check.json", "sdl-stage.log", "launch-error.json", "maintenance-ready.json"}
+    known = {"guest-console.log", "guest-load.log", "game-memory.jsonl", "sdl-check.json", "resource-check.json", "sdl-stage.log", "launch-error.json", "maintenance-ready.json", "controls-preview.png"}
     count = 0
     for path in files(settings):
         relative = path[len("Documents/"):]

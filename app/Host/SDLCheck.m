@@ -148,6 +148,8 @@ void RunSDLCheck(UIWindow *hostWindow, void (^completion)(NSDictionary *, NSStri
     result[@"nativeMousePositionPreserved"] = @(mouseX == 164 && mouseY == 112);
     NSDictionary *(*testMouseRouting)(SDL_Window *) = dlsym(bridge, "SRMouseRoutingTest");
     if (testMouseRouting) result[@"touchMouseRouting"] = testMouseRouting(window);
+    NSDictionary *(*testKeyboardRouting)(void) = dlsym(bridge, "SRKeyboardRoutingTest");
+    if (testKeyboardRouting) result[@"touchKeyboardRouting"] = testKeyboardRouting();
     NSString *compatPath = [NSBundle.mainBundle.privateFrameworksPath stringByAppendingPathComponent:@"MacCompat.framework/MacCompat"];
     void *compat = dlopen(compatPath.fileSystemRepresentation, RTLD_NOW | RTLD_LOCAL | RTLD_FIRST);
     NSDictionary *(*testDisplayModes)(void) = compat ? dlsym(compat, "SRDisplayModesTest") : NULL;

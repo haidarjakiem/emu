@@ -176,25 +176,45 @@ def build_compatibility(sdk):
              "-o", target / name], log=BUILD / "logs" / (name + ".log"))
 
 
+def missing_game_exports(source, symbols):
+    requested = set(re.findall(r'\b(?:dlsym|GameSymbol)\s*\(\s*game\s*,\s*"([^"]+)"\s*\)', source))
+    exported = set()
+    for line in symbols.splitlines():
+        fields = line.split()
+        if len(fields) >= 3 and fields[-2].isupper() and fields[-2] != "U":
+            exported.add(fields[-1].removeprefix("_"))
+    return sorted(requested - exported)
+
+
 def build_bridge(sdk):
+    # Check the actual external symbol table, not debug names that dlsym cannot
+    # resolve. The game-state adapter must also work in a signed release image.
+    source = "\n".join(path.read_text() for path in COMPAT.iterdir() if path.suffix in {".c", ".m"})
+    symbols = run(["xcrun", "nm", "-gU", VENDOR / "GameClient.framework/GameClient"], capture=True)
+    missing = missing_game_exports(source, symbols)
+    if missing:
+        raise UserError("The game-state adapter requires unavailable exports: " + ", ".join(missing))
     target = VENDOR / "SDLBridge.framework"
     framework_info(target, "SDLBridge")
     args = ["xcrun", "clang", "-target", "arm64-apple-ios17.0", "-isysroot", sdk, "-O2", "-fobjc-arc", "-F", VENDOR]
     for name in ["UIKit", "SDL2", "CoreGraphics", "QuartzCore", "GameController"]:
         args += ["-framework", name]
-    args += ["-dynamiclib"] + [COMPAT / n for n in ["SDLBridge.m", "MenuControls.m", "TouchInput.m"]]
+    args += ["-dynamiclib"] + [COMPAT / n for n in ["SDLBridge.m", "GameContext.c", "MenuControls.m", "TouchInput.m"]]
     args += ["-Wl,-install_name,@rpath/SDLBridge.framework/SDLBridge", "-o", target / "SDLBridge"]
     run(args, log=BUILD / "logs/bridge-build.log")
 
 
 def build_adapters():
+    key = preparation_key()
     print("Building native compatibility libraries...")
     sdk = sdk_path()
     build_compatibility(sdk)
     build_bridge(sdk)
     outputs = {str(p.relative_to(BUILD)): sha256(p)
                for p in VENDOR.rglob("*") if p.is_file()}
-    write_json(BUILD / "prepared.json", {"key": preparation_key(), "outputs": outputs})
+    if preparation_key() != key:
+        raise UserError("Adapter sources changed during the build. Run ./emu build again after editing finishes.")
+    write_json(BUILD / "prepared.json", {"key": key, "outputs": outputs})
 
 
 def prepare(game):

@@ -5,6 +5,7 @@ import io
 import json
 from pathlib import Path
 import re
+import subprocess
 import tempfile
 import unittest
 from unittest.mock import patch
@@ -108,6 +109,12 @@ class TransferTests(unittest.TestCase):
 
 
 class PreparedLibraryTests(unittest.TestCase):
+    def test_dynamic_lookups_require_exported_symbols(self):
+        source = 'dlsym(game, "_LocalGetter"); GameSymbol( game,\n "_WorldObject" );'
+        symbols = '00000000 t __LocalGetter\n00000010 D __WorldObject\n'
+        self.assertEqual(prepare.missing_game_exports(source, symbols), ["_LocalGetter"])
+        self.assertEqual(prepare.missing_game_exports(source, symbols.replace('t __Local', 'T __Local')), [])
+
     def test_verified_cache_can_refresh_without_original_game(self):
         with tempfile.TemporaryDirectory() as temporary, ExitStack() as stack:
             root = Path(temporary)
@@ -161,6 +168,16 @@ class ManifestTests(unittest.TestCase):
         self.assertEqual(len(names), 833)
         self.assertEqual(len(set(names)), 833)
         self.assertEqual(indices, [(name, str(index)) for index, name in enumerate(names)])
+
+
+class TouchPointerTests(unittest.TestCase):
+    def test_real_c_pointer_logic(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            binary = Path(temporary) / "touch-pointer-test"
+            subprocess.run(["cc", "-std=c11", "-Wall", "-Wextra", "-Werror",
+                            "-fsanitize=address,undefined", str(ROOT / "tests/touch_pointer.c"),
+                            "-o", str(binary)], check=True, capture_output=True)
+            subprocess.run([str(binary)], check=True, capture_output=True)
 
 
 if __name__ == "__main__":
